@@ -1,4 +1,4 @@
-package pt.gestao.stock.domain.entities;
+package pt.armazem.gestao_stock.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
