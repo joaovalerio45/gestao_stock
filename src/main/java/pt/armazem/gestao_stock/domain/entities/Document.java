@@ -22,5 +22,55 @@ import java.util.List;
 @NoArgsConstructor
 public class Document {
 
-    @
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "document_type_id", nullable = false)
+    private DocumentType documentType;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "operation_type_id", nullable = false)
+    private OperationType operationType;
+
+    @Column(nullable = false)
+    private Integer year;
+
+    @Column(name = "sequence_number", nullable = false)
+    private Long sequenceNumber; 
+
+    @Column(name = "internal_document_number", nullable = false, unique = true, length = 30)
+    private String internalDocumentNumber;
+
+    @Column(name = "origin_document_number", nullable = false, length = 50)
+    private String originDocumentNumber;
+
+    @Column(name = "document_date", nullable = false)
+    private LocalDate documentDate;
+
+    @Column(name = "registration_date", nullable = false)
+    private LocalDateTime registrationDate = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origin_warehouse_id")
+    private Warehouse originWarehouse;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origin_service_area_id")
+    private ServiceArea originServiceArea;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_warehouse_id")
+    private Warehouse destinationWarehouse;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_service_area_id")
+    private ServiceArea destinationServiceArea;
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentItem> items = new ArrayList<>();
+
+    @Column(length = 500)
+    private String observations;
 }

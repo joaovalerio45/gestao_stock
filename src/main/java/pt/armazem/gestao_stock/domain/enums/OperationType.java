@@ -4,16 +4,16 @@ import lombok.Getter;
 
 @Getter
 public enum OperationType {
-    ENTRADA("ENT"),
-    SAIDA("SAI"),
-    DEVOLUCAO("DEV"),
-    TRANSFERENCIA("TRF"),
-    Ajuste("AJU");
+    ENTRADA("ENT"),         // ENTRY
+    SAIDA("SAI"),           // WITHDRAWAL
+    DEVOLUCAO("DEV"),       // RETURN
+    TRANSFERENCIA("TRF"),   // TRANSFER
+    AJUSTE("AJU");          // ADJUSTMENT
 
-    private final String prefixo;
+    private final String prefix;
 
-    OperationType(String prefixo){
-        this.prefixo = prefixo;
+    OperationType(String prefix){
+        this.prefix = prefix;
 }
 
 
