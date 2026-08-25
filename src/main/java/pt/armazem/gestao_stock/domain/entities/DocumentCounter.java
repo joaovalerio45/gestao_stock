@@ -9,7 +9,7 @@ import pt.armazem.gestao_stock.domain.enums.OperationType;
 @Entity
 @Table(
     name = "contadores_operacao",
-    uniqueConstraints = { @UniqueConstraint( name = "uk_contador_natureza_ano", columnNames = {"natureza", "ano"})}
+    uniqueConstraints = { @UniqueConstraint( name = "contador_natureza_ano", columnNames = {"natureza", "ano"})}
 )
 @Getter
 @Setter

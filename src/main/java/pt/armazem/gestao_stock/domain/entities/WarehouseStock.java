@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor 
-public class StockArmazem {
+public class WarehouseStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
