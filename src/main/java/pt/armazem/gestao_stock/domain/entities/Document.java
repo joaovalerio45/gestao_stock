@@ -71,6 +71,10 @@ public class Document {
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DocumentItem> items = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private Request request;
+
     @Column(length = 500)
     private String observations;
 }
