@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Entity
 @Table(
-    name = "subfamilias", 
+    name = "subfamilies",
     uniqueConstraints = {
-        @UniqueConstraint(name = "subfamilia_familia_codigo", columnNames = {"familia_id", "codigo"})
+        @UniqueConstraint(name = "subfamily_family_code", columnNames = {"family_id", "code"})
     }
 )
 @Getter
@@ -22,15 +22,15 @@ public class SubFamily {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "familia_id", nullable = false)
-    private Family familia;
+    @JoinColumn(name = "family_id", nullable = false)
+    private Family family;
 
-    @Column(nullable = false, length = 10)
-    private String codigo;
+    @Column(name = "code", nullable = false, length = 10)
+    private String code;
 
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 }

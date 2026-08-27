@@ -8,8 +8,8 @@ import pt.armazem.gestao_stock.domain.enums.OperationType;
 
 @Entity
 @Table(
-    name = "contadores_operacao",
-    uniqueConstraints = { @UniqueConstraint( name = "contador_natureza_ano", columnNames = {"natureza", "ano"})}
+    name = "document_counters",
+    uniqueConstraints = { @UniqueConstraint(name = "document_counter_operation_year", columnNames = {"operation_type", "year"})}
 )
 @Getter
 @Setter
@@ -21,12 +21,12 @@ public class DocumentCounter {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private OperationType natureza;
+    @Column(name = "operation_type", nullable = false, length = 20)
+    private OperationType operationType;
 
     @Column(nullable = false)
-    private Integer ano;
+    private Integer year;
 
-    @Column(name = "ultimo_numero", nullable = false)
-    private Long ultimoNumero = 0L;
+    @Column(name = "last_number", nullable = false)
+    private Long lastNumber = 0L;
 }

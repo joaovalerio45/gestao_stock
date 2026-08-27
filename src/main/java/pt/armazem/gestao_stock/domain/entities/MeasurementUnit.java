@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "unidades_medida")
+@Table(name = "measurement_units")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,15 +16,15 @@ public class MeasurementUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 10)
-    private String sigla;
+    @Column(name = "abbreviation", nullable = false, unique = true, length = 10)
+    private String abbreviation;
 
-    @Column(nullable = false, length = 50)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
-    @Column(name = "permite_decimais", nullable = false)
-    private Boolean permiteDecimais = false;
+    @Column(name = "allows_decimals", nullable = false)
+    private Boolean allowsDecimals = false;
 
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 }

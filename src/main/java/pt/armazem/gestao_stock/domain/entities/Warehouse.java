@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "armazens")
+@Table(name = "warehouses")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,16 +16,16 @@ public class Warehouse{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Integer numero;
+    @Column(name = "number", nullable = false, unique = true)
+    private Integer number;
 
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column(length = 255)
-    private String morada;
+    @Column(name = "address", length = 255)
+    private String address;
 
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 
 }

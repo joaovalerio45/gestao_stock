@@ -7,7 +7,7 @@ import lombok.Setter;
 import pt.armazem.gestao_stock.domain.enums.EntityType;
 
 @Entity
-@Table(name = "entidades")
+@Table(name = "external_entities")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -17,22 +17,22 @@ public class ExternalEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String codigo;
+    @Column(name = "code", nullable = false, unique = true, length = 20)
+    private String code;
 
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column(nullable = false, length = 100)
-    private String abreviatura;
+    @Column(name = "abbreviation", nullable = false, length = 100)
+    private String abbreviation;
 
     @Column(length = 9)
     private String nif;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private EntityType tipo;
+    @Column(name = "type", nullable = false, length = 20)
+    private EntityType type;
 
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 }

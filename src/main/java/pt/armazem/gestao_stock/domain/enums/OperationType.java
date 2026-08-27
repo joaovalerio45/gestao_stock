@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum OperationType {
-    ENTRADA("ENT"),         // ENTRY
-    SAIDA("SAI"),           // WITHDRAWAL
-    DEVOLUCAO("DEV"),       // RETURN
-    TRANSFERENCIA("TRF"),   // TRANSFER
-    AJUSTE("AJU");          // ADJUSTMENT
+    ENTRY("ENT"),
+    WITHDRAWAL("SAI"),
+    RETURN("DEV"),
+    TRANSFER("TRF"),
+    ADJUSTMENT("AJU");
 
     private final String prefix;
 

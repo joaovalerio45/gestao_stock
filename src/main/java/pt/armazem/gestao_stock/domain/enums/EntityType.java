@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum EntityType {
-    FORNECEDOR, // SUPPLIER
-    DOADOR,     // DONOR
-    ENTIDADE,   // ENTITY
+    SUPPLIER,
+    DONOR,
+    ENTITY,
 }

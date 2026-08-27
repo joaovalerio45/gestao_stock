@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "artigos")
+@Table(name = "items")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,28 +18,31 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String codigo;
+    @Column(name = "code", nullable = false, unique = true, length = 20)
+    private String code;
 
-    @Column(nullable = false, length = 100)
-    private String descricao;
+    @Column(name = "name", nullable = false, unique = true, length = 50)
+    private String name;
+
+    @Column(name = "description", nullable = false, length = 100)
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "subfamilia_id" , nullable = false)
-    private SubFamily subfamilia;
+    @JoinColumn(name = "subfamily_id", nullable = false)
+    private SubFamily subFamily;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "unidadeMedida_id", nullable = false)
-    private MeasurementUnit unidadeMedida;
+    @JoinColumn(name = "measurement_unit_id", nullable = false)
+    private MeasurementUnit measurementUnit;
 
-    @Column(name = "ultimo_preco_unitario_sem_iva", precision = 12, scale = 4)
-    private BigDecimal ultimoPrecoUnitarioSemIva;
+    @Column(name = "last_price_no_vat", precision = 12, scale = 4)
+    private BigDecimal lastPriceNoVat;
 
-    @Column(name = "taxa_iva_padrao", precision = 5, scale = 4)
-    private BigDecimal taxaIvaPadrao = new BigDecimal("6.00");
+    @Column(name = "standard_vat_rate", precision = 5, scale = 4)
+    private BigDecimal standardVatRate = new BigDecimal("6.00");
     
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 
 
 }

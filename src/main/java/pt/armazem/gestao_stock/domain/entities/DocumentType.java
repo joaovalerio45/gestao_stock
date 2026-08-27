@@ -7,7 +7,7 @@ import lombok.Setter;
 import pt.armazem.gestao_stock.domain.enums.OperationType;
 
 @Entity
-@Table(name = "tipos_documento")
+@Table(name = "document_types")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,19 +17,19 @@ public class DocumentType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String codigo;
+    @Column(name = "code", nullable = false, unique = true, length = 20)
+    private String code;
 
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private OperationType natureza;
+    @Column(name = "operation_type", nullable = false, length = 20)
+    private OperationType operationType;
 
-    @Column(name = "movimenta_stock", nullable = false)
-    private Boolean movimentaStock = true;
+    @Column(name = "stock_movement_enabled", nullable = false)
+    private Boolean stockMovementEnabled = true;
 
-    @Column(nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 }

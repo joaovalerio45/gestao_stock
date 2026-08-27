@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "familias")
+@Table(name = "families")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,13 +16,13 @@ public class Family {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 10)
-    private String codigo;
+    @Column(name = "code", nullable = false, unique = true, length = 10)
+    private String code;
 
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column( nullable = false, length = 100)
-    private Boolean ativo = true;
+    @Column(name = "active", nullable = false, length = 100)
+    private Boolean active = true;
 
 }
