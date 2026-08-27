@@ -30,8 +30,8 @@ public class Document {
     @JoinColumn(name = "document_type_id", nullable = false)
     private DocumentType documentType;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "operation_type_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operation_type_id", nullable = false)
     private OperationType operationType;
 
     @Column(nullable = false)

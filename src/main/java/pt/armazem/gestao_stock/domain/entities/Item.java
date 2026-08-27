@@ -24,7 +24,7 @@ public class Item {
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(name = "description", nullable = false, length = 100)
+    @Column(name = "description", length = 100)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
