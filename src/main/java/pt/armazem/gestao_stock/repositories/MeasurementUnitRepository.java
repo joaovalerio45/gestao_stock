@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import pt.armazem.gestao_stock.domain.entities.MeasurementUnit;
 
 public interface MeasurementUnitRepository extends JpaRepository<MeasurementUnit,Long>{
-
+    
+        
 }
