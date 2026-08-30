@@ -18,8 +18,8 @@ import pt.armazem.gestao_stock.repositories.*;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final SubFamilyRepository subFamilyRepository;
-    private final MeasurementUnitRepository measurementUnitRepository;
+    private final SubFamilyService subFamilyService;
+    private final MeasurementUnitService measurementUnitService;
 
     public Item createItem(ItemRequest itemRequest){
         if(itemRepository.existsByCode(itemRequest.code())){
@@ -30,11 +30,9 @@ public class ItemService {
             throw new IllegalArgumentException("Item with name " + itemRequest.name() + " already exists");
         }
 
-        SubFamily subFamily = subFamilyRepository.findById(itemRequest.subFamilyId())
-            .orElseThrow(() -> new IllegalArgumentException("SubFamily not found with ID: " + itemRequest.subFamilyId()));
+        SubFamily subFamily = subFamilyService.getSubFamilyById(itemRequest.subFamilyId());
 
-        MeasurementUnit measurementUnit = measurementUnitRepository.findById(itemRequest.measurementUnitId())
-            .orElseThrow(() -> new IllegalArgumentException("MeasurementUnit not found with ID: " + itemRequest.measurementUnitId()));
+        MeasurementUnit measurementUnit = measurementUnitService.getMeasurementUnitById(itemRequest.measurementUnitId());
 
         Item item = new Item();
         item.setActive(true);
@@ -74,11 +72,9 @@ public class ItemService {
         item.setStandardVatRate(updateRequest.standardVatRate());
         item.setName(updateRequest.name());
 
-        SubFamily subFamily = subFamilyRepository.findById(updateRequest.subFamilyId())
-            .orElseThrow(() -> new IllegalArgumentException("SubFamily not found with ID: " + updateRequest.subFamilyId()));
+        SubFamily subFamily = subFamilyService.getSubFamilyById(updateRequest.subFamilyId());
 
-        MeasurementUnit measurementUnit = measurementUnitRepository.findById(updateRequest.measurementUnitId())
-            .orElseThrow(() -> new IllegalArgumentException("MeasurementUnit not found with ID: " + updateRequest.measurementUnitId()));
+        MeasurementUnit measurementUnit = measurementUnitService.getMeasurementUnitById(updateRequest.measurementUnitId());
 
 
         item.setSubFamily(subFamily);
