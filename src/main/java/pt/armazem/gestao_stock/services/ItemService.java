@@ -70,7 +70,6 @@ public class ItemService {
 
     public Item updateItem(Long id, ItemRequest updateRequest){
         Item item = getItemById(id);
-        item.setCode(updateRequest.code());
         item.setDescription(updateRequest.description());
         item.setStandardVatRate(updateRequest.standardVatRate());
         item.setName(updateRequest.name());
