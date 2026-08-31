@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import pt.armazem.gestao_stock.domain.entities.Document;
 import pt.armazem.gestao_stock.domain.entities.DocumentCounter;
 import pt.armazem.gestao_stock.domain.enums.OperationType;
+import pt.armazem.gestao_stock.dtos.DocumentRequest;
 import pt.armazem.gestao_stock.repositories.DocumentCounterRepository;
 import pt.armazem.gestao_stock.repositories.DocumentRepository;
 import pt.armazem.gestao_stock.repositories.DocumentTypeRepository;
@@ -22,6 +24,11 @@ public class DocumentService {
     private final ServiceAreaService serviceAreaService;
     private final ItemService itemService;
     private final WarehouseStockService warehouseStockService;
+
+    @Transactional
+    public Document createDocument(DocumentRequest dr){
+        
+    }
 
 
     
