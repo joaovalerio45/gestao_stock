@@ -15,6 +15,8 @@ import pt.armazem.gestao_stock.domain.entities.Item;
 import pt.armazem.gestao_stock.domain.enums.OperationType;
 import pt.armazem.gestao_stock.dtos.DocumentItemRequest;
 import pt.armazem.gestao_stock.dtos.DocumentRequest;
+import pt.armazem.gestao_stock.exceptions.BusinessRuleException;
+import pt.armazem.gestao_stock.exceptions.ResourceNotFoundException;
 import pt.armazem.gestao_stock.repositories.DocumentRepository;
 
 @Service
@@ -30,36 +32,27 @@ public class DocumentService {
     private final ItemService itemService;
     private final WarehouseStockService warehouseStockService;
 
-    @Transactional(readOnly = true)
     public Document getDocumentById(Long id) {
         return documentRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Document not found with ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID: " + id));
     }
-    @Transactional(readOnly = true)
+
     public List<Document> getAllDocuments() {
         return documentRepository.findAll();
     }
 
-    @Transactional
     public Document createDocument(DocumentRequest dr) {
-
-        if (dr.documentDate() == null) {
-            throw new IllegalArgumentException("The document date must not be null.");
-        }
-
-        if (dr.items() == null || dr.items().isEmpty()) {
-            throw new IllegalArgumentException("The document must have atleast one item.");
-        }
-
-        DocumentType dt = documentTypeService.getDocumentTypeById(dr.documentTypeId());
+        DocumentType dt = documentTypeService.getActiveDocumentTypeById(dr.documentTypeId());
         OperationType ot = dt.getOperationType();
         int year = dr.documentDate().getYear();
+
+        validateOriginDestination(ot, dr);
 
         Long sn = documentCounterService.incrementDocCounter(ot, year);
         String idc = String.format("%s-%d/%d", ot.getPrefix(), year, sn);
 
         Document doc = new Document();
-        doc.setDocumentType(dt); 
+        doc.setDocumentType(dt);
         doc.setOperationType(ot);
         doc.setYear(year);
         doc.setSequenceNumber(sn);
@@ -69,42 +62,54 @@ public class DocumentService {
         doc.setObservations(dr.observations());
 
         if (dr.originWarehouseId() != null) {
-            doc.setOriginWarehouse(warehouseService.getWarehouseById(dr.originWarehouseId()));
+            doc.setOriginWarehouse(warehouseService.getActiveWarehouseById(dr.originWarehouseId()));
         }
         if (dr.originServiceAreaId() != null) {
-            doc.setOriginServiceArea(serviceAreaService.getServiceAreaById(dr.originServiceAreaId()));
+            doc.setOriginServiceArea(serviceAreaService.getActiveServiceAreaById(dr.originServiceAreaId()));
         }
         if (dr.destinationWarehouseId() != null) {
-            doc.setDestinationWarehouse(warehouseService.getWarehouseById(dr.destinationWarehouseId()));
+            doc.setDestinationWarehouse(warehouseService.getActiveWarehouseById(dr.destinationWarehouseId()));
         }
         if (dr.destinationServiceAreaId() != null) {
-            doc.setDestinationServiceArea(serviceAreaService.getServiceAreaById(dr.destinationServiceAreaId()));
+            doc.setDestinationServiceArea(serviceAreaService.getActiveServiceAreaById(dr.destinationServiceAreaId()));
         }
 
         populateDocument(doc, dr.items());
         return documentRepository.save(doc);
     }
 
-    @Transactional
-    public Document populateDocument(Document doc, List<DocumentItemRequest> dir) {
-        for (DocumentItemRequest request : dir) {
-            if (request.itemId() == null || request.quantity() == null) {
-                throw new IllegalArgumentException("Item id and quantity must not be null.");
-            }
-            if (request.quantity().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Quantity must be greater than zero.");
-            }
+    public Document updateDocumentItems(Long id, List<DocumentItemRequest> dir) {
+        Document doc = getDocumentById(id);
 
-            Item item = itemService.getItemById(request.itemId());
+        if (doc.getDocumentType().getStockMovementEnabled()) {
+            for (DocumentItem line : doc.getItems()) {
+                if (doc.getOriginWarehouse() != null) {
+                    warehouseStockService.addStock(doc.getOriginWarehouse(), line.getItem(), line.getQuantity());
+                }
+                if (doc.getDestinationWarehouse() != null) {
+                    warehouseStockService.deductStock(doc.getDestinationWarehouse(), line.getItem(), line.getQuantity());
+                }
+            }
+        }
+        doc.getItems().clear();
+
+        populateDocument(doc, dir);
+
+        return documentRepository.save(doc);
+    }
+
+    private Document populateDocument(Document doc, List<DocumentItemRequest> dir) {
+        for (DocumentItemRequest request : dir) {
+            Item item = itemService.getActiveItemById(request.itemId());
 
             BigDecimal unitPrice = request.unitPriceExclVat() != null ? request.unitPriceExclVat() : item.getLastPriceNoVat();
             if (unitPrice == null) {
-                throw new IllegalArgumentException("Unit price for " + item.getName() + " is required.");
+                throw new BusinessRuleException("Unit price for '" + item.getName() + "' is required.");
             }
 
             BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : item.getStandardVatRate();
             if (vatRate == null) {
-                throw new IllegalArgumentException("Vat rate for " + item.getName() + " is required.");
+                throw new BusinessRuleException("VAT rate for '" + item.getName() + "' is required.");
             }
 
             BigDecimal totalExclVat = unitPrice.multiply(request.quantity());
@@ -137,27 +142,28 @@ public class DocumentService {
         return doc;
     }
 
-    @Transactional
-    public Document updateDocumentItems(Long id, List<DocumentItemRequest> dir) {
-        if (dir == null || dir.isEmpty()) {
-            throw new IllegalArgumentException("The document must have at least one item.");
-        }
-        Document doc = getDocumentById(id);
-
-        if (doc.getDocumentType().getStockMovementEnabled()) {
-            for (DocumentItem line : doc.getItems()) {
-                if (doc.getOriginWarehouse() != null) {
-                    warehouseStockService.addStock(doc.getOriginWarehouse(), line.getItem(), line.getQuantity());
-                }
-                if (doc.getDestinationWarehouse() != null) {
-                    warehouseStockService.deductStock(doc.getDestinationWarehouse(), line.getItem(), line.getQuantity());
-                }
+    private void validateOriginDestination(OperationType ot, DocumentRequest dr) {
+        switch (ot) {
+            case ENTRY -> {
+                if (dr.destinationWarehouseId() == null)
+                    throw new BusinessRuleException("ENTRY requires a destination warehouse.");
+            }
+            case WITHDRAWAL -> {
+                if (dr.originWarehouseId() == null)
+                    throw new BusinessRuleException("WITHDRAWAL requires an origin warehouse.");
+            }
+            case TRANSFER -> {
+                if (dr.originWarehouseId() == null || dr.destinationWarehouseId() == null)
+                    throw new BusinessRuleException("TRANSFER requires both origin and destination warehouses.");
+            }
+            case RETURN -> {
+                if (dr.destinationWarehouseId() == null)
+                    throw new BusinessRuleException("RETURN requires a destination warehouse.");
+            }
+            case ADJUSTMENT -> {
+                if (dr.originWarehouseId() == null)
+                    throw new BusinessRuleException("ADJUSTMENT requires a warehouse.");
             }
         }
-        doc.getItems().clear();
-
-        populateDocument(doc, dir);
-
-        return documentRepository.save(doc);
     }
 }

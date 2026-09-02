@@ -2,6 +2,15 @@ package pt.armazem.gestao_stock.dtos;
 
 import java.math.BigDecimal;
 
-public record ItemRequest(String code, String name, Long subFamilyId, Long measurementUnitId, String description, BigDecimal standardVatRate) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-}
+public record ItemRequest(
+    @NotBlank @Size(max = 20) String code,
+    @NotBlank @Size(max = 50) String name,
+    @NotNull Long subFamilyId,
+    @NotNull Long measurementUnitId,
+    @Size(max = 100) String description,
+    BigDecimal standardVatRate
+) {}

@@ -22,7 +22,7 @@ public class Family {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "active", nullable = false, length = 100)
+    @Column(name = "active", nullable = false)
     private Boolean active = true;
 
 }

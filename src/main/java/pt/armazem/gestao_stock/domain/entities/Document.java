@@ -31,7 +31,7 @@ public class Document {
     private DocumentType documentType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "operation_type_id", nullable = false)
+    @Column(name = "operation_type", nullable = false)
     private OperationType operationType;
 
     @Column(nullable = false)

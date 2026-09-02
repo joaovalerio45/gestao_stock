@@ -14,10 +14,8 @@ import pt.armazem.gestao_stock.repositories.DocumentCounterRepository;
 public class DocumentCounterService {
 
     private final DocumentCounterRepository documentCounterRepository;
-    
 
-    @Transactional
-    public Long incrementDocCounter(OperationType ot, Integer year){
+    public Long incrementDocCounter(OperationType ot, Integer year) {
         DocumentCounter dc = documentCounterRepository.findByOperationTypeAndYear(ot, year)
             .orElseGet(() -> {
                 DocumentCounter dcNew = new DocumentCounter();
@@ -26,11 +24,9 @@ public class DocumentCounterService {
                 dcNew.setLastNumber(0L);
                 return dcNew;
             });
-            Long nextNumber = dc.getLastNumber() + 1;
-            dc.setLastNumber(nextNumber);
-            documentCounterRepository.save(dc);
-            return nextNumber;
-        
+        Long nextNumber = dc.getLastNumber() + 1;
+        dc.setLastNumber(nextNumber);
+        documentCounterRepository.save(dc);
+        return nextNumber;
     }
-
 }

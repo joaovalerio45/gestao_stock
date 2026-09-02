@@ -2,10 +2,12 @@ package pt.armazem.gestao_stock.dtos;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public record DocumentItemRequest(
-    Long itemId,
-    BigDecimal quantity,
+    @NotNull Long itemId,
+    @NotNull @Positive BigDecimal quantity,
     BigDecimal unitPriceExclVat,
     BigDecimal vatRate
 ) {}
-

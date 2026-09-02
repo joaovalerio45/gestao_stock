@@ -10,7 +10,9 @@ import pt.armazem.gestao_stock.domain.entities.Item;
 import pt.armazem.gestao_stock.domain.entities.MeasurementUnit;
 import pt.armazem.gestao_stock.domain.entities.SubFamily;
 import pt.armazem.gestao_stock.dtos.ItemRequest;
-import pt.armazem.gestao_stock.repositories.*;
+import pt.armazem.gestao_stock.exceptions.BusinessRuleException;
+import pt.armazem.gestao_stock.exceptions.ResourceNotFoundException;
+import pt.armazem.gestao_stock.repositories.ItemRepository;
 
 @Service
 @Transactional
@@ -21,18 +23,17 @@ public class ItemService {
     private final SubFamilyService subFamilyService;
     private final MeasurementUnitService measurementUnitService;
 
-    public Item createItem(ItemRequest itemRequest){
-        if(itemRepository.existsByCode(itemRequest.code())){
-            throw new IllegalArgumentException("Item with code " + itemRequest.code() + " already exists");
+    public Item createItem(ItemRequest itemRequest) {
+        if (itemRepository.existsByCode(itemRequest.code())) {
+            throw new BusinessRuleException("Item with code '" + itemRequest.code() + "' already exists.");
         }
 
-        if(itemRepository.existsByName(itemRequest.name())){
-            throw new IllegalArgumentException("Item with name " + itemRequest.name() + " already exists");
+        if (itemRepository.existsByName(itemRequest.name())) {
+            throw new BusinessRuleException("Item with name '" + itemRequest.name() + "' already exists.");
         }
 
-        SubFamily subFamily = subFamilyService.getSubFamilyById(itemRequest.subFamilyId());
-
-        MeasurementUnit measurementUnit = measurementUnitService.getMeasurementUnitById(itemRequest.measurementUnitId());
+        SubFamily subFamily = subFamilyService.getActiveSubFamilyById(itemRequest.subFamilyId());
+        MeasurementUnit measurementUnit = measurementUnitService.getActiveMeasurementUnitById(itemRequest.measurementUnitId());
 
         Item item = new Item();
         item.setActive(true);
@@ -40,51 +41,47 @@ public class ItemService {
         item.setName(itemRequest.name());
         item.setDescription(itemRequest.description());
         item.setStandardVatRate(itemRequest.standardVatRate());
-        item.setName(itemRequest.name());
         item.setSubFamily(subFamily);
         item.setMeasurementUnit(measurementUnit);
 
         return itemRepository.save(item);
     }
 
-    @Transactional(readOnly = true)
-    public Item getItemById(Long id){
+    public Item getItemById(Long id) {
         return itemRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Item not found with ID: " + id));
     }
 
-    @Transactional
-    public Item toggleActiveItem(Long id){
+    public Item getActiveItemById(Long id) {
+        Item item = getItemById(id);
+        if (!item.getActive()) {
+            throw new BusinessRuleException("Item '" + item.getName() + "' is inactive.");
+        }
+        return item;
+    }
+
+    public Item toggleActiveItem(Long id) {
         Item item = getItemById(id);
         item.setActive(!item.getActive());
         return itemRepository.save(item);
     }
 
-    @Transactional(readOnly = true)
-    public List<Item> getAllItems(){
+    public List<Item> getAllItems() {
         return itemRepository.findAll();
-        
     }
 
-    public Item updateItem(Long id, ItemRequest updateRequest){
+    public Item updateItem(Long id, ItemRequest updateRequest) {
         Item item = getItemById(id);
         item.setDescription(updateRequest.description());
         item.setStandardVatRate(updateRequest.standardVatRate());
         item.setName(updateRequest.name());
 
-        SubFamily subFamily = subFamilyService.getSubFamilyById(updateRequest.subFamilyId());
-
-        MeasurementUnit measurementUnit = measurementUnitService.getMeasurementUnitById(updateRequest.measurementUnitId());
-
+        SubFamily subFamily = subFamilyService.getActiveSubFamilyById(updateRequest.subFamilyId());
+        MeasurementUnit measurementUnit = measurementUnitService.getActiveMeasurementUnitById(updateRequest.measurementUnitId());
 
         item.setSubFamily(subFamily);
         item.setMeasurementUnit(measurementUnit);
-        
+
         return itemRepository.save(item);
     }
-
-    
-
-
-
 }
