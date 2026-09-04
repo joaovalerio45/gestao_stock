@@ -31,6 +31,8 @@ public class DocumentService {
     private final ServiceAreaService serviceAreaService;
     private final ItemService itemService;
     private final WarehouseStockService warehouseStockService;
+    private final ExternalEntityService externalEntityService;
+    private final RequestService requestService;
 
     public Document getDocumentById(Long id) {
         return documentRepository.findById(id)
@@ -72,6 +74,12 @@ public class DocumentService {
         }
         if (dr.destinationServiceAreaId() != null) {
             doc.setDestinationServiceArea(serviceAreaService.getActiveServiceAreaById(dr.destinationServiceAreaId()));
+        }
+        if (dr.externalEntityId() != null) {
+            doc.setExternalEntity(externalEntityService.getActiveExternalEntityById(dr.externalEntityId()));
+        }
+        if (dr.requestId() != null) {
+            doc.setRequest(requestService.getPendingRequestById(dr.requestId()));
         }
 
         populateDocument(doc, dr.items());

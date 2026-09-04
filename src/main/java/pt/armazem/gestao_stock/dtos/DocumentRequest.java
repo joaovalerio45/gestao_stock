@@ -18,5 +18,6 @@ public record DocumentRequest(
     Long destinationServiceAreaId,
     @NotEmpty @Valid List<DocumentItemRequest> items,
     Long requestId,
+    Long externalEntityId,
     @Size(max = 500) String observations
 ) {}

@@ -72,6 +72,10 @@ public class Document {
     private List<DocumentItem> items = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "external_entity_id")
+    private ExternalEntity externalEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private Request request;
 
