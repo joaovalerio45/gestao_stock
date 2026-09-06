@@ -8,7 +8,8 @@ public enum OperationType {
     WITHDRAWAL("SAI"),
     RETURN("DEV"),
     TRANSFER("TRF"),
-    ADJUSTMENT("AJU");
+    ADJUSTMENT("AJU"),
+    REQUEST("REQ");
 
     private final String prefix;
 

@@ -172,6 +172,9 @@ public class DocumentService {
                 if (dr.originWarehouseId() == null)
                     throw new BusinessRuleException("ADJUSTMENT requires a warehouse.");
             }
+            case REQUEST -> {
+                    throw new BusinessRuleException("Can't create a document with REQUEST type.");
+            }
         }
     }
 }

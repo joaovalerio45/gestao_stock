@@ -2,13 +2,19 @@ package pt.armazem.gestao_stock.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import pt.armazem.gestao_stock.domain.entities.Request;
+import pt.armazem.gestao_stock.dtos.RequestRequest;
 import pt.armazem.gestao_stock.services.RequestService;
 
 @RestController
@@ -26,5 +32,11 @@ public class RequestController {
     @GetMapping
     public List<Request> fetchAllRequests() {
         return requestService.getAllRequests();
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Request createRequest(@Valid @RequestBody RequestRequest request) {
+        return requestService.createRequest(request);
     }
 }
