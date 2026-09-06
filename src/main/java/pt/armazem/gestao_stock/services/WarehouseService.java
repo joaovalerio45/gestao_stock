@@ -1,5 +1,7 @@
 package pt.armazem.gestao_stock.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,10 @@ public class WarehouseService {
     public Warehouse getWarehouseById(Long id) {
         return warehouseRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found with ID: " + id));
+    }
+
+    public List<Warehouse> getAllWarehouses(){
+        return warehouseRepository.findAll();
     }
 
     public Warehouse getActiveWarehouseById(Long id) {
