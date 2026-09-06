@@ -21,6 +21,10 @@ public class SubFamilyService {
             .orElseThrow(() -> new ResourceNotFoundException("SubFamily not found with ID: " + id));
     }
 
+    public java.util.List<SubFamily> getAllSubFamilies() {
+        return subFamilyRepository.findAll();
+    }
+
     public SubFamily getActiveSubFamilyById(Long id) {
         SubFamily subFamily = getSubFamilyById(id);
         if (!subFamily.getActive()) {

@@ -1,9 +1,14 @@
 package pt.armazem.gestao_stock.controllers;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import pt.armazem.gestao_stock.domain.entities.ServiceArea;
 import pt.armazem.gestao_stock.services.ServiceAreaService;
 
 @RestController
@@ -13,5 +18,13 @@ public class ServiceAreaController {
 
     private final ServiceAreaService serviceAreaService;
 
-}
+    @GetMapping("/{id}")
+    public ServiceArea fetchServiceAreaById(@PathVariable Long id) {
+        return serviceAreaService.getServiceAreaById(id);
+    }
 
+    @GetMapping
+    public List<ServiceArea> fetchAllServiceAreas() {
+        return serviceAreaService.getAllServiceAreas();
+    }
+}

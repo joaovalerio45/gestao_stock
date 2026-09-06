@@ -21,6 +21,10 @@ public class FamilyService {
             .orElseThrow(() -> new ResourceNotFoundException("Family not found with ID: " + id));
     }
 
+    public java.util.List<Family> getAllFamilies() {
+        return familyRepository.findAll();
+    }
+
     public Family getActiveFamilyById(Long id) {
         Family family = getFamilyById(id);
         if (!family.getActive()) {

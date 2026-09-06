@@ -21,6 +21,10 @@ public class MeasurementUnitService {
             .orElseThrow(() -> new ResourceNotFoundException("MeasurementUnit not found with ID: " + id));
     }
 
+    public java.util.List<MeasurementUnit> getAllMeasurementUnits() {
+        return measurementUnitRepository.findAll();
+    }
+
     public MeasurementUnit getActiveMeasurementUnitById(Long id) {
         MeasurementUnit unit = getMeasurementUnitById(id);
         if (!unit.getActive()) {

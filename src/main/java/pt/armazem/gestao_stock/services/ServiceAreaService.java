@@ -21,6 +21,10 @@ public class ServiceAreaService {
             .orElseThrow(() -> new ResourceNotFoundException("ServiceArea not found with ID: " + id));
     }
 
+    public java.util.List<ServiceArea> getAllServiceAreas() {
+        return serviceAreaRepository.findAll();
+    }
+
     public ServiceArea getActiveServiceAreaById(Long id) {
         ServiceArea serviceArea = getServiceAreaById(id);
         if (!serviceArea.getActive()) {
