@@ -21,6 +21,10 @@ public class ExternalEntityService {
             .orElseThrow(() -> new ResourceNotFoundException("ExternalEntity not found with ID: " + id));
     }
 
+    public java.util.List<ExternalEntity> getAllExternalEntities() {
+        return externalEntityRepository.findAll();
+    }
+
     public ExternalEntity getActiveExternalEntityById(Long id) {
         ExternalEntity entity = getExternalEntityById(id);
         if (!entity.getActive()) {

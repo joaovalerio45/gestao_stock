@@ -22,6 +22,10 @@ public class RequestService {
             .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
     }
 
+    public java.util.List<Request> getAllRequests() {
+        return requestRepository.findAll();
+    }
+
     public Request getPendingRequestById(Long id) {
         Request request = getRequestById(id);
         if (request.getState() != RequestState.PENDING) {

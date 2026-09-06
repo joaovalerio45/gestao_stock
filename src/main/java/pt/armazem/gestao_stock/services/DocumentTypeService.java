@@ -21,6 +21,10 @@ public class DocumentTypeService {
             .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found with ID: " + id));
     }
 
+    public java.util.List<DocumentType> getAllDocumentTypes() {
+        return documentTypeRepository.findAll();
+    }
+
     public DocumentType getActiveDocumentTypeById(Long id) {
         DocumentType documentType = getDocumentTypeById(id);
         if (!documentType.getActive()) {
