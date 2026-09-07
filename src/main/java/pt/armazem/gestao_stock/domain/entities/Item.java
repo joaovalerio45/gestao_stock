@@ -38,8 +38,8 @@ public class Item {
     @Column(name = "last_price_no_vat", precision = 12, scale = 4)
     private BigDecimal lastPriceNoVat;
 
-    @Column(name = "standard_vat_rate", precision = 5, scale = 2)
-    private BigDecimal standardVatRate = new BigDecimal("6.00");
+    @Column(name = "vat_rate", precision = 5, scale = 2)
+    private BigDecimal vatRate = new BigDecimal("6.00");
     
     @Column(name = "active", nullable = false)
     private Boolean active = true;

@@ -40,7 +40,9 @@ public class ItemService {
         item.setCode(itemRequest.code());
         item.setName(itemRequest.name());
         item.setDescription(itemRequest.description());
-        item.setStandardVatRate(itemRequest.standardVatRate());
+        if (itemRequest.vatRate() != null) {
+            item.setVatRate(itemRequest.vatRate());
+        }
         item.setSubFamily(subFamily);
         item.setMeasurementUnit(measurementUnit);
 
@@ -73,7 +75,9 @@ public class ItemService {
     public Item updateItem(Long id, ItemRequest updateRequest) {
         Item item = getItemById(id);
         item.setDescription(updateRequest.description());
-        item.setStandardVatRate(updateRequest.standardVatRate());
+        if (updateRequest.vatRate() != null) {
+            item.setVatRate(updateRequest.vatRate());
+        }
         item.setName(updateRequest.name());
 
         SubFamily subFamily = subFamilyService.getActiveSubFamilyById(updateRequest.subFamilyId());

@@ -132,7 +132,7 @@ public class DocumentService {
                 throw new BusinessRuleException("Unit price for '" + item.getName() + "' is required.");
             }
 
-            BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : item.getStandardVatRate();
+            BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : item.getVatRate();
             if (vatRate == null) {
                 throw new BusinessRuleException("VAT rate for '" + item.getName() + "' is required.");
             }

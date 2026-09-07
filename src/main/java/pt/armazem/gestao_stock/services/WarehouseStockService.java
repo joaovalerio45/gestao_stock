@@ -1,6 +1,7 @@
 package pt.armazem.gestao_stock.services;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,11 @@ public class WarehouseStockService {
     public WarehouseStock getWarehouseStock(Long warehouseId, Long itemId) {
         return warehouseStockRepository.findByWarehouseIdAndItemId(warehouseId, itemId)
             .orElseThrow(() -> new ResourceNotFoundException("No stock found for item " + itemId + " in warehouse " + warehouseId + "."));
+    }
+
+    public List<WarehouseStock> getStocksByWarehouseId(Long warehouseId) {
+        warehouseService.getWarehouseById(warehouseId);
+        return warehouseStockRepository.findByWarehouseId(warehouseId);
     }
 
     public BigDecimal getStockQuantity(Long warehouseId, Long itemId) {

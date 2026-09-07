@@ -1,5 +1,7 @@
 package pt.armazem.gestao_stock.controllers;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +19,12 @@ public class WarehouseStockController {
     private final WarehouseStockService warehouseStockService;
 
     @GetMapping("/{warehouseId}/items/{itemId}")
-    public WarehouseStock fetchWarehouseStockbyId(@PathVariable Long warehouseId, @PathVariable Long itemId){
+    public WarehouseStock fetchWarehouseStockbyId(@PathVariable Long warehouseId, @PathVariable Long itemId) {
         return warehouseStockService.getWarehouseStock(warehouseId, itemId);
     }
 
+    @GetMapping("/{warehouseId}")
+    public List<WarehouseStock> fetchStocksByWarehouse(@PathVariable Long warehouseId) {
+        return warehouseStockService.getStocksByWarehouseId(warehouseId);
+    }
 }
-

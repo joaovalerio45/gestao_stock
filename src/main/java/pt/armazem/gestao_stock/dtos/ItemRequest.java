@@ -12,5 +12,5 @@ public record ItemRequest(
     @NotNull Long subFamilyId,
     @NotNull Long measurementUnitId,
     @Size(max = 100) String description,
-    BigDecimal standardVatRate
+    BigDecimal vatRate
 ) {}

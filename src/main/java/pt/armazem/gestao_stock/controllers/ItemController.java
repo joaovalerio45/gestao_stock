@@ -20,7 +20,7 @@ import pt.armazem.gestao_stock.domain.entities.Item;
 import pt.armazem.gestao_stock.dtos.ItemRequest;
 
 @RestController
-@RequestMapping("api/items")
+@RequestMapping("/api/items")
 @RequiredArgsConstructor
 public class ItemController {
 
