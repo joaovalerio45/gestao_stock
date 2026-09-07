@@ -41,7 +41,7 @@ public class WarehouseStockService {
         if (quantity.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
-        WarehouseStock ws = warehouseStockRepository.findByWarehouseIdAndItemId(warehouse.getId(), item.getId())
+        WarehouseStock ws = warehouseStockRepository.findByWarehouseIdAndItemIdForUpdate(warehouse.getId(), item.getId())
             .orElseGet(() -> {
                 WarehouseStock wsNew = new WarehouseStock();
                 wsNew.setItem(item);
@@ -64,7 +64,8 @@ public class WarehouseStockService {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
-        WarehouseStock ws = getWarehouseStock(warehouse.getId(), item.getId());
+        WarehouseStock ws = warehouseStockRepository.findByWarehouseIdAndItemIdForUpdate(warehouse.getId(), item.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("No stock found for item " + item.getId() + " in warehouse " + warehouse.getId() + "."));
 
         if (quantity.compareTo(ws.getCurrentStock()) > 0) {
             throw new BusinessRuleException("The quantity must not exceed current stock for item: " + item.getName());

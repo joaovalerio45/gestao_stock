@@ -52,6 +52,11 @@ public class RequestController {
         return requestService.markPreparing(id);
     }
 
+    @PatchMapping("/{id}/release")
+    public Request releasePreparing(@PathVariable Long id) {
+        return requestService.releasePreparing(id);
+    }
+
     @PatchMapping("/{id}/cancel")
     public Request cancelRequest(@PathVariable Long id) {
         return requestService.cancelRequest(id);

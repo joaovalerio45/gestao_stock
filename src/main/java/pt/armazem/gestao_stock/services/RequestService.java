@@ -39,9 +39,10 @@ public class RequestService {
     }
 
     public Request getFulfillableRequestById(Long id) {
-        Request request = getRequestById(id);
-        if (request.getState() != RequestState.PENDING && request.getState() != RequestState.PREPARING) {
-            throw new BusinessRuleException("Request '" + request.getNumber() + "' is in state " + request.getState() + " and cannot be fulfilled.");
+        Request request = requestRepository.findByIdForUpdate(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
+        if (request.getState() != RequestState.PREPARING) {
+            throw new BusinessRuleException("Request '" + request.getNumber() + "' is in state " + request.getState() + ". Only requests in PREPARING state can be fulfilled.");
         }
         return request;
     }
@@ -72,7 +73,8 @@ public class RequestService {
     }
 
     public Request updateRequest(Long id, RequestRequest request) {
-        Request req = getRequestById(id);
+        Request req = requestRepository.findByIdForUpdate(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
 
         if (req.getState() != RequestState.PENDING) {
             throw new BusinessRuleException("Request cannot be edited because it is in state: " + req.getState());
@@ -93,16 +95,28 @@ public class RequestService {
     }
 
     public Request markPreparing(Long id) {
-        Request req = getRequestById(id);
+        Request req = requestRepository.findByIdForUpdate(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
         if (req.getState() != RequestState.PENDING) {
-            throw new BusinessRuleException("Only PENDING requests can be marked as PREPARING.");
+            throw new BusinessRuleException("Only PENDING requests can be marked as PREPARING. Current state: " + req.getState());
         }
         req.setState(RequestState.PREPARING);
         return requestRepository.save(req);
     }
 
+    public Request releasePreparing(Long id) {
+        Request req = requestRepository.findByIdForUpdate(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
+        if (req.getState() != RequestState.PREPARING) {
+            throw new BusinessRuleException("Only PREPARING requests can be released back to PENDING. Current state: " + req.getState());
+        }
+        req.setState(RequestState.PENDING);
+        return requestRepository.save(req);
+    }
+
     public Request cancelRequest(Long id) {
-        Request req = getRequestById(id);
+        Request req = requestRepository.findByIdForUpdate(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
         if (req.getState() == RequestState.FULFILLED) {
             throw new BusinessRuleException("Cannot cancel a request that has already been fulfilled.");
         }
