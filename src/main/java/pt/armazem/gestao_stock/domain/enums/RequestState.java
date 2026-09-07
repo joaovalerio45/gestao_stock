@@ -6,7 +6,6 @@ import lombok.Getter;
 public enum RequestState {
     PENDING,
     PREPARING,
-    SENT,
-    RECEIVED,
-    CANCELED,
+    FULFILLED,
+    CANCELED
 }

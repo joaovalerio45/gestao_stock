@@ -1,6 +1,8 @@
 package pt.armazem.gestao_stock.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,33 +34,33 @@ public class RequestService {
             .orElseThrow(() -> new ResourceNotFoundException("Request not found with ID: " + id));
     }
 
-    public java.util.List<Request> getAllRequests() {
+    public List<Request> getAllRequests() {
         return requestRepository.findAll();
     }
 
-    public Request getPendingRequestById(Long id) {
+    public Request getFulfillableRequestById(Long id) {
         Request request = getRequestById(id);
-        if (request.getState() != RequestState.PENDING) {
-            throw new BusinessRuleException("Request '" + request.getNumber() + "' is not in a PENDING state.");
+        if (request.getState() != RequestState.PENDING && request.getState() != RequestState.PREPARING) {
+            throw new BusinessRuleException("Request '" + request.getNumber() + "' is in state " + request.getState() + " and cannot be fulfilled.");
         }
         return request;
     }
 
-    public Request createRequest(RequestRequest request){
+    public Request createRequest(RequestRequest request) {
         Request req = new Request();
         req.setServiceArea(serviceAreaService.getActiveServiceAreaById(request.serviceAreaId()));
         req.setWarehouse(warehouseService.getActiveWarehouseById(request.warehouseId()));
         
         int year = LocalDate.now().getYear();
-        Long seq = documentCounterService.incrementDocCounter(OperationType.REQUEST,year);
+        Long seq = documentCounterService.incrementDocCounter(OperationType.REQUEST, year);
         String reqNumber = String.format("%s-%d/%d", OperationType.REQUEST.getPrefix(), year, seq);
         req.setNumber(reqNumber);
 
-        if(request.requestNotes() != null){
+        if (request.requestNotes() != null) {
             req.setRequestNotes(request.requestNotes());
         }
 
-        for(RequestItemRequest line : request.items()){
+        for (RequestItemRequest line : request.items()) {
             RequestItem requestItem = new RequestItem();
             requestItem.setItem(itemService.getActiveItemById(line.itemId()));
             requestItem.setRequestedQuantity(line.requestedQuantity());
@@ -69,6 +71,51 @@ public class RequestService {
         return requestRepository.save(req);
     }
 
-    
-}
+    public Request updateRequest(Long id, RequestRequest request) {
+        Request req = getRequestById(id);
 
+        if (req.getState() != RequestState.PENDING) {
+            throw new BusinessRuleException("Request cannot be edited because it is in state: " + req.getState());
+        }
+
+        req.setRequestNotes(request.requestNotes());
+        
+        req.getItems().clear();
+        for (RequestItemRequest line : request.items()) {
+            RequestItem requestItem = new RequestItem();
+            requestItem.setItem(itemService.getActiveItemById(line.itemId()));
+            requestItem.setRequestedQuantity(line.requestedQuantity());
+            requestItem.setRequest(req);
+            req.getItems().add(requestItem);
+        }
+
+        return requestRepository.save(req);
+    }
+
+    public Request markPreparing(Long id) {
+        Request req = getRequestById(id);
+        if (req.getState() != RequestState.PENDING) {
+            throw new BusinessRuleException("Only PENDING requests can be marked as PREPARING.");
+        }
+        req.setState(RequestState.PREPARING);
+        return requestRepository.save(req);
+    }
+
+    public Request cancelRequest(Long id) {
+        Request req = getRequestById(id);
+        if (req.getState() == RequestState.FULFILLED) {
+            throw new BusinessRuleException("Cannot cancel a request that has already been fulfilled.");
+        }
+        if (req.getState() == RequestState.CANCELED) {
+            throw new BusinessRuleException("Request is already canceled.");
+        }
+        req.setState(RequestState.CANCELED);
+        return requestRepository.save(req);
+    }
+
+    public void fulfillRequest(Request req) {
+        req.setState(RequestState.FULFILLED);
+        req.setFulfillmentDate(LocalDateTime.now());
+        requestRepository.save(req);
+    }
+}

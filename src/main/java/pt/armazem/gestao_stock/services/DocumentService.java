@@ -12,6 +12,8 @@ import pt.armazem.gestao_stock.domain.entities.Document;
 import pt.armazem.gestao_stock.domain.entities.DocumentItem;
 import pt.armazem.gestao_stock.domain.entities.DocumentType;
 import pt.armazem.gestao_stock.domain.entities.Item;
+import pt.armazem.gestao_stock.domain.entities.Request;
+import pt.armazem.gestao_stock.domain.entities.RequestItem;
 import pt.armazem.gestao_stock.domain.enums.OperationType;
 import pt.armazem.gestao_stock.dtos.DocumentItemRequest;
 import pt.armazem.gestao_stock.dtos.DocumentRequest;
@@ -78,12 +80,27 @@ public class DocumentService {
         if (dr.externalEntityId() != null) {
             doc.setExternalEntity(externalEntityService.getActiveExternalEntityById(dr.externalEntityId()));
         }
+        Request req = null;
         if (dr.requestId() != null) {
-            doc.setRequest(requestService.getPendingRequestById(dr.requestId()));
+            req = requestService.getFulfillableRequestById(dr.requestId());
+            doc.setRequest(req);
         }
 
         populateDocument(doc, dr.items());
-        return documentRepository.save(doc);
+        Document savedDoc = documentRepository.save(doc);
+
+        if (req != null) {
+            for (DocumentItem line : doc.getItems()) {
+                for (RequestItem reqItem : req.getItems()) {
+                    if (reqItem.getItem().getId().equals(line.getItem().getId())) {
+                        reqItem.setFulfilledQuantity(reqItem.getFulfilledQuantity().add(line.getQuantity()));
+                    }
+                }
+            }
+            requestService.fulfillRequest(req);
+        }
+
+        return savedDoc;
     }
 
     public Document updateDocumentItems(Long id, List<DocumentItemRequest> dir) {
