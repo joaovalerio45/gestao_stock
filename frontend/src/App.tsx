@@ -1,8 +1,11 @@
-function App() {
+import { LanguageProvider } from './context/LanguageContext';
+import { NavBar } from './components/Navbar';
+
+
+export default function App() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Gestão de Stock</h1>
-    </div>
-  )
+    <LanguageProvider>
+        <NavBar />
+    </LanguageProvider>
+  );
 }
-export default App

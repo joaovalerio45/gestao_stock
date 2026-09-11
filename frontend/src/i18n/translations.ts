@@ -5,7 +5,7 @@ export const translations = {
     // Navigation & App
     appTitle: 'Gestão de Stock',
     appSubtitle: 'Sistema de Gestão & Armazém',
-    dashboard: 'Dashboard',
+    dashboard: 'Visão Geral',
     warehouses: 'Armazéns',
     stock: 'Stock Armazém',
     requests: 'Requisições',
